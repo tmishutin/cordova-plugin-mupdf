@@ -7,8 +7,12 @@ import org.apache.cordova.CallbackContext;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import android.app.Activity;
 import android.net.Uri;
 import android.content.Intent;
+import android.util.Log;
+
 import com.artifex.mupdfdemo.MuPDFActivity;
 
 public class MuPdfPlugin extends CordovaPlugin {
@@ -24,9 +28,8 @@ public class MuPdfPlugin extends CordovaPlugin {
       final boolean annotationsEnabled = options.getBoolean("annotationsEnabled");
       final boolean isAnnotatedPdf = options.getBoolean("isAnnotatedPdf");
       final String headerColor = options.getString("headerColor");
-
+        cordova.setActivityResultCallback (this);
       Uri uri = Uri.parse(fileUrl);
-
       Intent intent = new Intent(cordova.getActivity(), MuPDFActivity.class);
 
       intent.setAction(Intent.ACTION_VIEW);
@@ -46,20 +49,10 @@ public class MuPdfPlugin extends CordovaPlugin {
   public void onActivityResult(int requestCode, int resultCode, Intent intent) {
     switch (requestCode) {
     case 0: //integer matching the integer suplied when starting the activity
-         if(resultCode == android.app.Activity.RESULT_OK){
-             //in case of success return the string to javascript
-             String result = intent.getStringExtra(MuPDFActivity.KEY_SAVE_RESULTS);
-             if(result != null && result.length() > 0) {
-               try {
-                 final JSONObject saveResults = new JSONObject(result);
-                 this.callbackContext.success(saveResults);
-               } catch (JSONException e) {
-                    e.printStackTrace();
-                }
 
-             } else {
-               this.callbackContext.success();
-             }
+         if(resultCode == 0){
+             //in case of success return the string to javascript
+             this.callbackContext.success("success");
          }
          else{
              //code launched in case of error
